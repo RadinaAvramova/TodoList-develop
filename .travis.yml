@@ -1,0 +1,19 @@
+language: csharp
+solution: TodoList.sln
+mono: none
+dotnet: 2.2.107
+install: 
+ - dotnet tool install --global coverlet.console
+before_script:
+  - export PATH="$PATH:$HOME/.dotnet/tools"
+script:
+ - dotnet restore TodoList.Web/TodoList.Web.csproj
+ - dotnet build TodoList.Web/TodoList.Web.csproj
+ - dotnet test TodoList.UnitTests/
+ - coverlet ./TodoList.UnitTests/bin/Debug/netcoreapp2.2/TodoList.UnitTests.dll --target "dotnet" --targetargs "test ./TodoList.UnitTests --no-build" --format opencover --exclude "[xunit.*]*" --exclude "[TodoList.Web.*.Views]*"
+after_script:
+ - bash <(curl -s https://codecov.io/bash)
+cache:
+  directories:
+    - '$HOME/.nuget/packages'
+    - '$HOME/.local/share/NuGet/Cache'
