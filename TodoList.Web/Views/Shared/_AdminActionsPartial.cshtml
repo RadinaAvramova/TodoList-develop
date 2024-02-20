@@ -1,0 +1,31 @@
+﻿@using TodoList.Core
+@using TodoList.Core.Models
+@using TodoList.Web
+@using Microsoft.AspNetCore.Mvc.Localization
+@using TodoList.Localization.Shared
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+
+@if (signInManager.IsSignedIn(User))
+{
+    var currentUser = await userManager.GetUserAsync(User);
+
+    var isAdmin = currentUser != null
+        && await userManager.IsInRoleAsync(
+            currentUser,
+            Constants.AdministratorRole);
+
+    if (isAdmin)
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a asp-controller="ManageUsers"
+                   asp-action="Index">
+                    @SharedLocalizer["Manage Users"]
+                </a>
+            </li>
+        </ul>
+    }
+}
